@@ -27,5 +27,8 @@
   "homepage": "https://github.com/serivesmejia/festio#readme",
   "devDependencies": {
     "nodemon": "^3.1.11"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
