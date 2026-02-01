@@ -43,6 +43,16 @@ app.get('/conciertos/:id', (req, res) => {
     }
 });
 
+app.get('/conciertos/:id/boletos_vendidos', (req, res) => {
+    let concierto = conciertos.find(c => c.id == req.params.id);
+    if (concierto) {
+        let total_boletos_vendidos = totalBoletosVendidos(concierto.id);
+        res.json({ boletos_vendidos: total_boletos_vendidos });
+    } else {
+        res.status(404).json({ message: "Concierto no encontrado" });
+    }
+});
+
 app.post('/conciertos', (req, res) => {
     let concierto = req.body;
 
@@ -98,8 +108,7 @@ app.post('/boletos', (req, res) => {
     let boleto = req.body;
     let concierto = conciertos.find(c => c.id == boleto.conciertoId);
     if (concierto) {
-        let boletos_vendidos_concierto = boletos.filter(b => b.conciertoId == boleto.conciertoId)
-        let total_boletos_vendidos = boletos_vendidos_concierto.length
+        let total_boletos_vendidos = totalBoletosVendidos(boleto.conciertoId);
 
         if (boleto.comprador && boleto.cantidad > 0) {
             if((total_boletos_vendidos + boleto.cantidad) <= concierto.max_boletos) {
@@ -121,6 +130,31 @@ app.post('/boletos', (req, res) => {
     }
 });
 
+app.put('/boletos/:id', (req, res) => {
+    let boleto = boletos.find(b => b.id == req.params.id);
+    let concierto = conciertos.find(c => c.id == boleto.conciertoId);
+
+    if (boleto && concierto) {
+        let updatedData = req.body;
+        if (updatedData.cantidad && updatedData.cantidad > 0) {
+            // hay que verificar si hay suficientes boletos en el concierto
+            let total_boletos_vendidos = totalBoletosVendidos(boleto.conciertoId, boleto.id);
+
+            if((total_boletos_vendidos + updatedData.cantidad) <= concierto.max_boletos) {
+                boleto.cantidad = updatedData.cantidad;
+            } else {
+                return res.status(400).json({
+                    message: "Concierto no tiene boletos suficientes"
+                }).send();
+            }
+        }
+        if (updatedData.comprador) boleto.comprador = updatedData.comprador;
+        res.status(200).send();
+    } else {
+        res.status(404).json({ message: "Boleto o concierto no encontrado" });
+    }
+});
+
 app.delete('/boletos/:id', (req, res) => {
     let index = boletos.findIndex(b => b.id == req.params.id);
     if (index !== -1) {
@@ -139,3 +173,15 @@ app.delete('/boletos/:id', (req, res) => {
 app.listen(PORT, () => {
     console.log(`fest.io backend running on port ${PORT}`);
 }); 
+
+// -----------------------------
+// Función para contar boletos vendidos de un concierto
+// -----------------------------
+function totalBoletosVendidos(conciertoId, excluirBoletoId = null) {
+    const boletosFiltrados = boletos.filter(b => b.conciertoId == conciertoId && b.id !== excluirBoletoId);
+    let total = 0;
+    for (let i = 0; i < boletosFiltrados.length; i++) {
+        total += boletosFiltrados[i].cantidad;
+    }
+    return total;
+}
