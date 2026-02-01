@@ -15,10 +15,16 @@ let conciertos = [{
     hora: "20:00",
     sede: "Teatro de los Heroes",
     ciudad: "Chihuahua",
-    precio: 120
+    precio: 120,
+    max_boletos: 500,
 
 }];
-let boletos = [];
+let boletos = [{
+    id: 0,
+    conciertoId: 0,
+    comprador: "Juan Perez",
+    cantidad: 2
+}];
 let conciertoIdCounter = 1;
 let boletoIdCounter = 1;
 
@@ -32,7 +38,7 @@ app.get('/conciertos', (req, res) => res.json(conciertos));
 app.post('/conciertos', (req, res) => {
     let concierto = req.body;
 
-    if (concierto.artista && concierto.fecha && concierto.hora && concierto.sede && concierto.ciudad && concierto.precio > 0) {
+    if (concierto.artista && concierto.fecha && concierto.hora && concierto.sede && concierto.ciudad && concierto.precio > 0 && concierto.max_boletos > 0) {
         concierto.id = conciertoIdCounter++;
         conciertos.push(concierto);
         res.status(201).send();
