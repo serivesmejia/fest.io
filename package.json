@@ -1,0 +1,31 @@
+{
+  "name": "festio",
+  "version": "1.0.0",
+  "description": "Backend en Node.js para gestionar conciertos y boletos en memoria.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serivesmejia/festio.git"
+  },
+  "keywords": [
+    "concert",
+    "concierto",
+    "festival",
+    "boletos",
+    "tickets"
+  ],
+  "author": "serivesmejia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serivesmejia/festio/issues"
+  },
+  "homepage": "https://github.com/serivesmejia/festio#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
