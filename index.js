@@ -124,6 +124,11 @@ app.delete('/conciertos/:id', (req, res) => {
 // -----------------------------
 app.get('/boletos', (req, res) => res.json(boletos));
 
+app.get('/boletos/:concierto_id', (req, res) => {
+    let boletosConcierto = boletos.filter(b => b.conciertoId == req.params.concierto_id);
+    res.json(boletosConcierto);
+});
+
 app.post('/boletos', (req, res) => {
     let boleto = req.body;
     let concierto = conciertos.find(c => c.id == boleto.conciertoId);
